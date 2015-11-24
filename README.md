@@ -13,12 +13,15 @@ game.
 
 e.g.
 ```
-Intro <- Branch
-  Choice A
-    Consequence A <- Branch
-  Choice B
-    Consequence B <- Branch
-  ...
+First Branch
+├── Choice A
+│   ├── Branch A
+│   ├── Choice A i
+│   │   └── Branch A i
+│   └── Choice A ii
+│       └── Branch A ii
+└── Choice B
+    └── Branch
 ```
 
 ### Properties
@@ -29,8 +32,7 @@ references to other branches.
 #### Quick Example
 
 ```javascript
-Sweet.root = {
-  tag: 'intro',
+Sweet.story = {
   text: 'You find yourself in a room with a window and a door.',
   choices: {
     'Look out the window': {
@@ -52,9 +54,7 @@ Sweet.bundle = [
 
 #### Text
 
-Adds text to the `narrative` area of the screen. Special `inserts` can be used
-to populate values from objects and characters, allowing for more
-customized gameplay. (see Inserts)
+Adds text to the `narrative` area of the screen. Special `inserts` can be used to populate values from objects and characters, allowing for more customized gameplay. (see Inserts)
 
 ##### Basic Use
 ```javascript
@@ -63,10 +63,7 @@ customized gameplay. (see Inserts)
 }
 ```
 
-By default, new text will be in a paragraph of it's own. In order to continue
-the previous paragraph, use `< ` at the start.
-e.g. `"<It roared and the ground shook."`
-For more than one paragraph use an array of strings.
+By default, new text will be in a paragraph of it's own. In order to continue the previous paragraph, use `< ` at the start. e.g. `"<It roared and the ground shook."` For more than one paragraph use an array of strings.
 e.g.
 ```javascript
 {
@@ -79,13 +76,12 @@ e.g.
 
 #### Tag
 
-Tags are used to move the story from one branch to another. Every game must have
-at least one branch tagged `intro`.
+Tags are used to move the story from one branch to another. So if a branch is tagged `hallway` then when another branch with the action `#hallway` is specified, it will move to the hallway branch. The tag `intro` is reserved for bringing the player to the beginning.
 
 ##### Basic Use
 ```javascript
 {
-  tag: 'intro'
+  tag: 'hallway'
 }
 ```
 
@@ -162,7 +158,56 @@ Sweet.bundle = [
 
 Inserts are little bits of code in `text` that gets replaced with values from the main character, inventory and actions. This makes it easy to type a minimal amount for simple things such as, for example, pronouns for the main character.
 
-##### Basic Use
-```javascript
+### Character Inserts
 
+Use insert tag `c{variableName}` to insert values from the character.
+
+```javascript
+// Branch
+{
+  text: "Here is a little example text that talks a little bit about your character. c{hisher} favorite color is c{favcolor}. c{heshe} likes to play c{favgame}."
+}
+// Character
+Sweet.character = {
+  heshe = "he",
+  hisher = "his",
+  hishers = "his",
+  self = "himself",
+  favcolor = "blue",
+  favgame = "Sweet Text"
+}
+```
+
+### Inventory Inserts
+
+Use insert tag `i{itemID|pass text|fail text}` to show text based whether or not the item is in the inventory or `i{itemID}` for the display name.
+
+```javascript
+// Branch
+{
+  text: "You i{flashlight|have|do not have} a i{flashlight}!"
+}
+// Inventory
+Sweet.inventory = [
+  {
+    id: "flashlight",
+    name: "red flashlight",
+    description: "A red flashlight with a black button"
+  }
+]
+```
+
+### Action Inserts
+
+So long as the condition passes, the action of a branch will be executed and may return an object that can be used as inserts.
+```javascript
+// Branch
+{
+  action: function () {
+    return {
+      coin: Math.random() > 0.5
+    };
+  },
+  text: "The coin flip resulted in a a{coin|heads|tails}!"
+}
 ```
