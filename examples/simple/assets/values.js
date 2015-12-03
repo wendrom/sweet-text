@@ -1,4 +1,4 @@
 // Character
-Sweet.character = {
+Sweet.values = {
 	name = "Jace"
 }

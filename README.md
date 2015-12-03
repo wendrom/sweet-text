@@ -4,6 +4,8 @@ Sweet Text
 An engine that makes it easy to create CYOA (choose your own adventure) games
 that can be played in a web browser!
 
+Sorry if the info here seems incomplete. Not everything works yet.
+
 # Usage
 
 ## Branch
@@ -32,24 +34,26 @@ references to other branches.
 #### Quick Example
 
 ```javascript
-Sweet.story = {
+Sweet.intro({
   text: 'You find yourself in a room with a window and a door.',
-  choices: {
-    'Look out the window': {
+  choices: [
+    {
+      choice: 'Look out the window',
       text: 'You look out the window to see a bird in a tree.'
     },
-    'Go through the door': {
+    {
+      choice: 'Go through the door',
       action: '#hallway'
     }
-  }
-};
+  ]
+});
 
-Sweet.bundle = [
+Sweet.story([
   {
     tag: 'hallway',
     text: "You're in a hallway with 4 doors on either side and a staircase at the end."
   }
-];
+]);
 ```
 
 #### Text
@@ -110,22 +114,24 @@ Conditions are criteria that must be met for the branch to be available as a cho
 ##### Basic Use
 ```javascript
 {
-  choices: {
-    "Do something": {
+  choices: [
+    {
+      choice: "Do something",
       condition: function() {
         return false;
       }
     },
-    "Do something else": {
+    {
+      choice: "Do something else",
       condition: "has book"
     }
-  }
+  ]
 }
 ```
 
 #### Action
 
-Actions are functions that are executed when the branch is reached. If a string is specified, it could move the narrative to a particular branch using a tag. e.g. `action: '#tagname'`. You can also remove or add an item from the inventory using the keywords `take` and `give` respectively. e.g. `action: 'take book'` or `action: 'give book'`.
+Actions are functions that are executed when the branch is reached. You can also remove or add an item from the inventory using the keywords `take` and `give` respectively. e.g. `action: 'take book'` or `action: 'give book'`.
 
 ##### Basic Use
 ```javascript
@@ -136,13 +142,13 @@ Actions are functions that are executed when the branch is reached. If a string 
 }
 ```
 
-## Bundle
+## Story
 
-The `bundle` is a collection of branches that don't fit within the main narrative tree and so must have tags to refer to them.
+The `story` is a collection of branches that don't fit within the main narrative tree and so must have tags to refer to them.
 
 ##### Basic Use
 ```javascript
-Sweet.bundle = [
+Sweet.story([
   {
     tag: 'one'
     // One Branch...
@@ -151,50 +157,46 @@ Sweet.bundle = [
     tag: 'two'
     // Two Branch...
   }
-]
+]);
 ```
 
 ## Inserts
 
 Inserts are little bits of code in `text` that gets replaced with values from the main character, inventory and actions. This makes it easy to type a minimal amount for simple things such as, for example, pronouns for the main character.
 
-### Character Inserts
+### General Inserts
 
-Use insert tag `c{variableName}` to insert values from the character.
+Use insert tag `v{variableName}` to insert values stored in either `text` or in `choice` properties.
 
 ```javascript
 // Branch
 {
-  text: "Here is a little example text that talks a little bit about your character. c{hisher} favorite color is c{favcolor}. c{heshe} likes to play c{favgame}."
+  text: "Here is a little example text that talks a little bit about your character. Your favorite color is c{favcolor}. You like to play c{favgame}."
 }
-// Character
-Sweet.character = {
-  heshe = "he",
-  hisher = "his",
-  hishers = "his",
-  self = "himself",
+// values
+Sweet.values({
   favcolor = "blue",
   favgame = "Sweet Text"
-}
+});
 ```
 
 ### Inventory Inserts
 
-Use insert tag `i{itemID|pass text|fail text}` to show text based whether or not the item is in the inventory or `i{itemID}` for the display name.
+Use insert tag `v{itemID|pass text|fail text}` to show text based whether or not the item is in the inventory or `v{itemID}` for the display name. The name of the item will only show if entered into the inventory.
 
 ```javascript
 // Branch
 {
-  text: "You i{flashlight|have|do not have} a i{flashlight}!"
+  text: "You v{flashlight|have|do not have} a v{flashlight}!"
 }
 // Inventory
-Sweet.inventory = [
+Sweet.inventory([
   {
     id: "flashlight",
     name: "red flashlight",
     description: "A red flashlight with a black button"
   }
-]
+]);
 ```
 
 ### Action Inserts

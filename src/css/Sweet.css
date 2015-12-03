@@ -1,0 +1,48 @@
+
+.sw-body {
+	background: #111;
+	color: #EEE;
+}
+
+.sw-block {
+	display: block;
+	margin: auto;
+	max-width: 800px;
+}
+
+.sw-wrapper {
+	font: normal 16px/160% Verdana, sans-serif;
+}
+.sw-wrapper h2 {
+	font: bold 30px/100% Verdana, sans-serif;
+	padding: 20px;
+}
+
+.sw-narrative {
+	
+}
+.sw-narrative p {
+	padding: 10px;
+}
+
+.sw-choices {
+	
+}
+.sw-choice {
+	background: rgba(0, 0, 0, 0.1);
+	color: #888;
+	cursor: pointer;
+	margin: 5px;
+	padding: 5px 10px;
+}
+.sw-choice:hover {
+	color: #AAA;
+}
+
+.sw-character {
+	
+}
+
+.sw-inventory {
+	
+}
