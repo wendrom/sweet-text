@@ -2,13 +2,17 @@
 Sweet.story([
 	{
 		tag: 'foo',
-		text: "foo v{foo}",
+		text: "<foo v{foo}",
 		choices: [
 			{
 				choice: 'foo? v{foobar|yay|nay}',
 				tag: 'foo-foo',
 				next: 'foo',
-				text: "foo-foo! v{foobar|y|n}"
+				text: [
+					"foo-foo! v{foobar|y|n}",
+					'"Here is another v{foobar|paragraph|thing}!" he says.',
+					"<And another one that continues the last one!"
+				]
 			},
 			{
 				choice: 'bar? v{foobar}',
@@ -34,7 +38,7 @@ Sweet.story([
 				choice: 'foo?',
 				tag: 'bar-foo',
 				next: 'foo',
-				text: "bar-foo! v{foobar|y|n}"
+				text: "bar-foo! v{foobar|multiple success words|and some more failure words}"
 			},
 			{
 				choice: 'bar?',

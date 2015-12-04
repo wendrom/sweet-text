@@ -19,14 +19,21 @@
 }
 
 .sw-narrative {
-	
+	padding: 20px 0 10px;
 }
 .sw-narrative p {
 	padding: 10px;
 }
+.sw-narrative p.title {
+	border-bottom: 1px solid #999;
+	color: #999;
+	font: italic 14px/100% Verdana, sans-serif;
+	margin: 10px;
+	text-align: center;
+}
 
 .sw-choices {
-	
+	padding-bottom: 80px;
 }
 .sw-choice {
 	background: rgba(0, 0, 0, 0.1);

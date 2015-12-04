@@ -44,19 +44,17 @@
 		
 		Sweet._startDisplay = function (branch) {
 			var narrative = document.getElementById('sw-narrative');
+			if (typeof branch.title == 'string') {
+				Sweet._appendTitle(branch.title);
+			}
 			if (typeof branch.text == 'string') {
-				if (branch.text.substr(0, 1) == "<") {
-					var narrative = document.getElementById('sw-narrative');
-					var node = narrative.lastChild();
-					node.appendChild(document.createTextNode(Sweet._formatText(branch.text)));
-				} else {
-					Sweet._appendNarrative(Sweet._formatText(branch.text));
+				Sweet._appendNarrative(branch.text);
+			} else if (branch.text != null && branch.text.constructor === Array) {
+				for (var i = 0; i < branch.text.length; i++) {
+					var para = branch.text[i];
+					Sweet._appendNarrative(para);
 				}
-			} else if (Array.isArray(branch.text)) {
-				for (var para in branch.text) {
-					Sweet._appendNarrative(Sweet._formatText(para));
-				}
-			} else {
+			} else if (typeof branch.text != 'undefined') {
 				console.error("Only strings or arrays of strings allowed for the text property!");
 				console.log(branch);
 				return false;
@@ -96,12 +94,25 @@
 			}
 		};
 		
-		Sweet._appendNarrative = function (text) {
+		Sweet._appendNarrative = function (text, title) {
 			var narrative = document.getElementById('sw-narrative');
-			var node = document.createElement('p');
-			node.appendChild(document.createTextNode(text));
-			narrative.appendChild(node);
+			if (text.substr(0, 1) == "<") {
+				var node = narrative.lastChild;
+				node.appendChild(document.createTextNode(Sweet._formatText(" " + text.substr(1))));
+			} else {
+				var node = document.createElement('p');
+				node.appendChild(document.createTextNode(Sweet._formatText(text)));
+				narrative.appendChild(node);
+			}
 		};
+		
+		Sweet._appendTitle = function (title) {
+			var narrative = document.getElementById('sw-narrative');
+			var titleNode = document.createElement('p');
+			titleNode.setAttribute('class', 'title');
+			titleNode.appendChild(document.createTextNode(Sweet._formatText(title)));
+			narrative.appendChild(titleNode);
+		}
 		
 		Sweet._startBranch = function (branch) {
 			Sweet._debug("starting branch: " + (branch.tag != null ? branch.tag : "tagless"))
@@ -143,7 +154,7 @@
 			if (inserts == null) return text;
 			for (var i = 0; i < inserts.length; i++) {
 				var insert = inserts[i];
-				var insertData = insert.match(dataReg);
+				var insertData = insert.replace(/(v\{|\})/g, "").split(/\|/g);
 				var valueItem = Sweet.data.values[insertData[0]];
 				if (typeof valueItem == 'boolean') {
 					if (insertData[1] != null) {
@@ -166,7 +177,7 @@
 					text = text.replace(replaceReg, valueItem);
 				}
 			}
-			return text;
+			return text.replace(/( )+/g, " ");
 		};
 		
 		Sweet._startNext = function (branch) {
@@ -219,6 +230,43 @@
 				Sweet.data.values[label] = null;
 			}
 		};
+		
+		/*****************
+		* Values methods
+		*****************/
+		
+		Sweet.set = function (label, value) {
+			Sweet.data.values[label] = value;
+		};
+		
+		Sweet.give = function (label) {
+			Sweet.data.values[label] = true;
+		};
+		
+		Sweet.take = function (label) {
+			Sweet.data.values[label] = false;
+		};
+		
+		Sweet.has = function (label) {
+			return (Sweet.data.values[label] != null ? Sweet.data.values[label] : false);
+		};
+		
+		Sweet.get = function (label) {
+			for (var i = 0; i < Sweet.data.inventory.length; i++) {
+				var item = Sweet.data.inventory[i];
+				if (item.id == label) {
+					return item;
+				}
+			}
+		};
+		
+		Sweet.remove = function (label) {
+			Sweet.data.values[label] = null;
+		};
+		
+		/*****************
+		* Ready methods
+		*****************/
 		
 		Sweet.intro = function (obj) {
 			Sweet.data.intro = obj;
